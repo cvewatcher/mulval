@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # Github actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  
+  # MulVal (as a Service) module
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "pandatix"
+
+  # IaC Go module
+  - package-ecosystem: "gomod"
+    directory: "/deploy"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "pandatix"
+
+  # Root Dockerfile
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "pandatix"

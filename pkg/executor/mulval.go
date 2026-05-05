@@ -188,6 +188,13 @@ func (e *Executor) runMulval(rc *RunContext, op *store.Operation) (*mulvalOutput
 				Summary:     strings.TrimSpace(string(out)),
 			}, nil
 		}
+		// Append xsb_log.txt if present — it contains the XSB Prolog
+		// error details that graph_gen.sh asks you to check.
+		xsbLog, _ := os.ReadFile(filepath.Join(workDir, "xsb_log.txt"))
+		if len(xsbLog) > 0 {
+			return nil, fmt.Errorf("graph_gen.sh: %w\noutput:\n%s\nxsb_log.txt:\n%s",
+				err, string(out), string(xsbLog))
+		}
 		return nil, fmt.Errorf("graph_gen.sh: %w\noutput:\n%s", err, string(out))
 	}
 
