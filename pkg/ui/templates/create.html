@@ -1,0 +1,64 @@
+{{define "title"}}New Analysis — MulVAL{{end}}
+
+{{define "content"}}
+<div class="page-title">New Analysis</div>
+<div class="page-sub">Submit EDB facts and optional IDB rules to generate an attack graph.</div>
+
+<div id="create-err" class="err-banner"></div>
+
+<form id="create-form">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Inputs</span></div>
+    <div class="card-body">
+
+      <div style="margin-bottom:20px">
+        <label for="f-id">
+          Analysis ID
+          <span class="label-note">(optional — idempotency key)</span>
+        </label>
+        <input type="text" id="f-id" placeholder="leave blank to auto-generate" style="max-width:420px">
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label for="f-edb">
+            EDB Facts
+            <span style="color:var(--red);font-size:10px;text-transform:none">required</span>
+          </label>
+          <textarea id="f-edb" placeholder="attackerLocated(internet).
+attackGoal(execCode(fileServer,_)).
+hacl(internet, webServer, tcp, 80).
+hacl(webServer, fileServer, tcp, 445).
+hacl(H, H, _, _).
+networkServiceInfo(webServer, httpd, tcp, 80, apache).
+vulExists(webServer, 'CVE-2021-44228', httpd).
+vulProperty('CVE-2021-44228', remoteExploit, privEscalation).
+networkServiceInfo(fileServer, smb, tcp, 445, root).
+vulExists(fileServer, 'CVE-2017-0144', smb).
+vulProperty('CVE-2017-0144', remoteExploit, privEscalation)."></textarea>
+          <div class="form-hint">One MulVAL Prolog fact per line. Lines starting with % are ignored.</div>
+        </div>
+        <div>
+          <label for="f-idb">
+            IDB Rules
+            <span class="label-note">(optional)</span>
+          </label>
+          <textarea id="f-idb" placeholder="% Additional interaction rules appended via -a.
+% Leave blank to use MulVAL defaults only."></textarea>
+          <div class="form-hint">Appended to the default MulVAL rule base via graph_gen.sh -a.</div>
+        </div>
+      </div>
+
+      <div class="flex gap-sm">
+        <button type="submit" class="btn btn-primary" id="f-submit">Run Analysis</button>
+        <button type="button" class="btn" onclick="clearForm()">Clear</button>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<script src="/ui/static/js/util.js"></script>
+<script src="/ui/static/js/api.js"></script>
+<script src="/ui/static/js/create.js"></script>
+{{end}}

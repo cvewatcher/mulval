@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package api.v1.operations;
+
+import "google/api/annotations.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/cvewatcher/mulval/proto/api/v1/operations;operations";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Operations API"
+    description: "Long-running operations management following AIP-151."
+    version: "v1"
+  }
+};
+
+// Operations exposes the google.longrunning.Operations interface
+// over HTTP/JSON with OpenAPI documentation.
+// All operation names follow AIP-151 resource name patterns:
+//   analysis/{uuid}/operations/{uuid}
+service Operations {
+  rpc GetOperation(google.longrunning.GetOperationRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {get: "/api/v1/operations/{name}"};
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Get a long-running operation"
+      description:
+        "Returns the current state of a long-running operation. "
+        "Once Done=true the result contains the completed resource."
+    };
+  }
+
+  rpc WaitOperation(google.longrunning.WaitOperationRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/api/v1/operations/{name}:wait"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Wait for a long-running operation"
+      description:
+        "Blocks until the operation is done or the timeout elapses. "
+        "Returns Done=false if the timeout elapses before completion - "
+        "call again to continue waiting."
+    };
+  }
+
+  rpc CancelOperation(google.longrunning.CancelOperationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/v1/operations/{name}:cancel"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Cancel a long-running operation"
+      description:
+        "Requests cancellation of a running operation. "
+        "Returns immediately - the operation transitions to a terminal "
+        "state asynchronously. Check the operation state to confirm."
+    };
+  }
+
+  rpc DeleteOperation(google.longrunning.DeleteOperationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {delete: "/api/v1/operations/{name}"};
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Delete a long-running operation"
+      description:
+        "Deletes a terminal operation record. "
+        "Has no effect on the underlying deployment."
+    };
+  }
+
+  rpc ListOperations(google.longrunning.ListOperationsRequest) returns (google.longrunning.ListOperationsResponse) {
+    option (google.api.http) = {get: "/api/v1/operations"};
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "List long-running operations"
+      description:
+        "Lists operations for a given parent resource. "
+        "Pass parent=analysis/{uuid} to list operations for a deployment."
+    };
+  }
+}

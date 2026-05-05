@@ -1,0 +1,5 @@
+# swagger
+swagger-ui/*
+
+# local Pulumi stacks
+Pulumi.*.yaml

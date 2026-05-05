@@ -1,0 +1,129 @@
+{{define "title"}}Analysis — MulVAL{{end}}
+
+{{define "topbar-actions"}}
+<a href="/ui/" class="btn">← Analyses</a>
+<a href="/ui/create" class="btn btn-primary">+ New Analysis</a>
+{{end}}
+
+{{define "content"}}
+{{if .AnalysisName}}
+
+{{/* Inject resource names for analysis.js */}}
+<script>
+  window.ANALYSIS_NAME = '{{.AnalysisName}}';
+  window.OP_NAME       = '{{.OperationName}}';
+</script>
+
+<div class="flex-between mb-3" style="flex-wrap:wrap;gap:12px">
+  <div>
+    <div class="page-title">Analysis</div>
+    <div class="mono-xs text-muted" style="margin-top:2px">{{.OperationName}}</div>
+  </div>
+  <div id="d-badge"></div>
+</div>
+
+{{/* Metadata + Inputs */}}
+<div class="grid-2 mb-4">
+  <div class="card" style="margin-bottom:0">
+    <div class="card-header"><span class="card-title">Metadata</span></div>
+    <div class="card-body">
+      <div class="kv" id="d-meta">
+        <span class="kv-k">State</span>   <span class="kv-v">Loading…</span>
+        <span class="kv-k">Created</span> <span class="kv-v">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:0">
+    <div class="card-header flex-between">
+      <span class="card-title">Inputs</span>
+      <div class="tabs" id="inputs-tabs">
+        <button class="tab active" onclick="switchTab('inputs','edb',this)">EDB Facts</button>
+        <button class="tab" onclick="switchTab('inputs','idb',this)">IDB Rules</button>
+      </div>
+    </div>
+    <pre id="tab-edb" class="flush">Loading…</pre>
+    <pre id="tab-idb" class="flush" style="display:none"></pre>
+  </div>
+</div>
+
+{{/* Running state */}}
+<div id="section-running" style="display:none">
+  <div class="card">
+    <div class="card-body wait-box">
+      <p><span class="spinner"></span>Analysis running…</p>
+      <small id="d-wait-msg">Waiting for MulVAL to complete. This page updates automatically.</small>
+      <div style="margin-top:18px">
+        <button class="btn btn-danger" onclick="cancelAnalysis()">Cancel operation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{/* Failed state */}}
+<div id="section-failed" style="display:none">
+  <div class="section-div"><span>Error</span></div>
+  <div class="card" style="border-color:#fecaca">
+    <div class="card-header"><span class="card-title text-red">MulVAL error</span></div>
+    <pre id="d-error" class="flush error-pre"></pre>
+  </div>
+</div>
+
+{{/* Succeeded state */}}
+<div id="section-succeeded" style="display:none">
+  <div class="section-div"><span>Attack Graph</span></div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-header"><span class="card-title">Graph statistics</span></div>
+      <div class="card-body"><div class="kv" id="d-gstats"></div></div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-header"><span class="card-title">MulVAL summary</span></div>
+      <pre id="d-summary" class="flush" style="max-height:180px"></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header flex-between">
+      <span class="card-title">Force-directed graph</span>
+      <div class="flex gap-sm">
+        <button class="btn btn-sm" onclick="resetZoom()">⊡ Reset zoom</button>
+        <button class="btn btn-sm" id="lbl-btn" onclick="toggleLabels()">Labels: on</button>
+      </div>
+    </div>
+    <div style="position:relative">
+      <svg id="graph-svg"></svg>
+      <div id="node-tip"></div>
+    </div>
+    <div class="graph-legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#1d4ed8"></div>AND node (derived)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#1a6b3c"></div>OR node</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#92400e;border-radius:50%"></div>Leaf (primitive fact)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#b91c1c;border-radius:50%"></div>Goal node</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header flex-between">
+      <span class="card-title">Raw outputs</span>
+      <div class="tabs" id="raw-tabs">
+        <button class="tab active" onclick="switchTab('raw','vertices',this)">VERTICES.CSV</button>
+        <button class="tab" onclick="switchTab('raw','arcs',this)">ARCS.CSV</button>
+      </div>
+    </div>
+    <pre id="tab-vertices" class="flush"></pre>
+    <pre id="tab-arcs"     class="flush" style="display:none"></pre>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="/ui/static/js/util.js"></script>
+<script src="/ui/static/js/api.js"></script>
+<script src="/ui/static/js/graph.js"></script>
+<script src="/ui/static/js/analysis.js"></script>
+
+{{else}}
+<p class="text-muted">No analysis name provided.</p>
+{{end}}
+{{end}}

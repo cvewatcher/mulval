@@ -1,0 +1,29 @@
+{{define "layout.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{block "title" .}}MulVAL{{end}}</title>
+  <link rel="stylesheet" href="/ui/static/css/main.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="topbar-logo" href="/ui/">MulVAL <em>/ Attack Graph Analysis</em></a>
+  <div class="spacer"></div>
+  {{block "topbar-actions" .}}
+    <a href="/ui/" class="btn">Analyses</a>
+    <a href="/ui/create" class="btn btn-primary">+ New Analysis</a>
+  {{end}}
+</header>
+
+<main class="main">
+  {{block "content" .}}{{end}}
+</main>
+
+<div id="toast"></div>
+
+</body>
+</html>
+{{end}}

@@ -1,0 +1,4 @@
+# Proto generated files - not for review
+*.pb.go linguist-generated=true
+*.pb.gw.go linguist-generated=true
+gen/ linguist-generated=true

@@ -1,0 +1,46 @@
+{{define "title"}}Analyses — MulVAL{{end}}
+
+{{define "content"}}
+<div class="page-title">Analyses</div>
+<div class="page-sub">All MulVAL attack graph generation runs, newest first.</div>
+
+<div class="stat-row">
+  <div class="stat"><div class="stat-val" id="cnt-total">—</div><div class="stat-label">Total</div></div>
+  <div class="stat"><div class="stat-val" id="cnt-run">—</div><div class="stat-label">Running</div></div>
+  <div class="stat"><div class="stat-val" id="cnt-ok">—</div><div class="stat-label">Succeeded</div></div>
+  <div class="stat"><div class="stat-val" id="cnt-fail">—</div><div class="stat-label">Failed</div></div>
+</div>
+
+<div class="card">
+  <div class="card-header flex-between">
+    <span class="card-title">All analyses</span>
+    <button class="btn btn-sm" id="refresh-btn">↺ Refresh</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Analysis ID</th>
+          <th>Created</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody id="analyses-tbody">
+        <tr>
+          <td colspan="5">
+            <div class="empty">
+              <div class="empty-icon">⏳</div>
+              <div class="empty-label">Loading…</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="/ui/static/js/util.js"></script>
+<script src="/ui/static/js/api.js"></script>
+<script src="/ui/static/js/analyses.js"></script>
+{{end}}

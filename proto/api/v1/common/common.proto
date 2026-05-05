@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package api.v1.common;
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/cvewatcher/mulval/proto/api/v1/common;common";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "MulVal as a Service - API"
+    version: "placeholder"
+    description: "REST API for the MulVal service."
+    license: {
+      name: "Apache-License 2.0"
+      url: "https://github.com/cvewatcher/mulval/blob/main/LICENSE"
+    }
+  }
+  external_docs: {
+    url: "https://github.com/cvewatcher/mulval"
+    description: "Source repository and documentation"
+  }
+  schemes: HTTP
+  schemes: HTTPS
+  consumes: "application/json"
+  produces: "application/json"
+};

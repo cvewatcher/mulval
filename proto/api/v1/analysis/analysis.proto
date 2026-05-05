@@ -1,0 +1,213 @@
+syntax = "proto3";
+
+package api.v1.analysis;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/cvewatcher/mulval/proto/api/v1/analysis;analysis";
+
+// ── Resource: Analysis ────────────────────────────────────────────────────────
+
+// Analysis represents a single MulVAL attack graph generation run.
+// Resource name: analyses/{analysis_id}
+message Analysis {
+  option (google.api.resource) = {
+    type: "mulval.cvewatcher.dev/Analysis"
+    pattern: "analyses/{analysis}"
+    singular: "analysis"
+    plural: "analyses"
+  };
+
+  // Resource name. Server-assigned if not provided on creation.
+  // Format: analyses/{analysis_id}
+  string name = 1;
+
+  // Client-provided idempotency key. If a request with the same
+  // analysis_id is received while a run is in progress or completed,
+  // the existing operation is returned rather than starting a new run.
+  // Optional — server assigns a UUID if omitted.
+  string analysis_id = 2;
+
+  // EDB ground facts in MulVAL Prolog syntax, one clause per entry.
+  // Example: "hacl(internet, webServer, tcp, 80)."
+  // Required.
+  repeated string edb_facts = 3 [(google.api.field_behavior) = REQUIRED];
+
+  // Additional IDB interaction rules in MulVAL Prolog syntax.
+  // These are appended to the default MulVAL interaction rules via
+  // graph_gen.sh -a. Optional — only the default rules apply if empty.
+  repeated string idb_rules = 4;
+
+  // The state of the analysis.
+  State state = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // When the analysis was created.
+  google.protobuf.Timestamp create_time = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // When the analysis completed (succeeded or failed).
+  google.protobuf.Timestamp end_time = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // The attack graph result. Populated only when state = SUCCEEDED.
+  AttackGraph attack_graph = 8 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Human-readable error message. Populated only when state = FAILED.
+  string error = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Lifecycle states of an analysis.
+  enum State {
+    STATE_UNSPECIFIED = 0;
+    // Queued, not yet started.
+    PENDING = 1;
+    // MulVAL subprocess is running.
+    RUNNING = 2;
+    // Completed successfully. attack_graph is populated.
+    SUCCEEDED = 3;
+    // MulVAL returned an error. error field is populated.
+    FAILED = 4;
+    // Cancelled by the client.
+    CANCELLED = 5;
+  }
+}
+
+// ── Resource: AttackGraph ─────────────────────────────────────────────────────
+
+// AttackGraph is the output of a completed Analysis.
+message AttackGraph {
+  // Raw content of VERTICES.CSV as produced by MulVAL.
+  string vertices_csv = 1;
+
+  // Raw content of ARCS.CSV as produced by MulVAL.
+  string arcs_csv = 2;
+
+  // Raw content of AttackGraph.txt (MulVAL's text summary).
+  string summary = 3;
+
+  // Parsed vertices for programmatic consumption.
+  repeated Vertex vertices = 4;
+
+  // Parsed arcs for programmatic consumption.
+  repeated Arc arcs = 5;
+}
+
+// Vertex represents one node in the attack graph.
+message Vertex {
+  // Numeric vertex ID as assigned by MulVAL.
+  int32 id = 1;
+
+  // Prolog fact label (e.g. "execCode(webServer,apache)").
+  string fact = 2;
+
+  // Vertex type as classified by MulVAL.
+  VertexType vertex_type = 3;
+
+  // Whether this vertex is the declared attackGoal.
+  bool is_goal = 4;
+
+  enum VertexType {
+    VERTEX_TYPE_UNSPECIFIED = 0;
+    // A derived logical consequence (AND node).
+    AND = 1;
+    // A primitive EDB fact (leaf node).
+    LEAF = 2;
+    // An OR node (multiple paths lead here).
+    OR = 3;
+  }
+}
+
+// Arc represents a directed edge in the attack graph.
+message Arc {
+  // Source vertex ID.
+  int32 src = 1;
+
+  // Destination vertex ID.
+  int32 dst = 2;
+}
+
+// ── LRO metadata ─────────────────────────────────────────────────────────────
+
+// AnalysisOperationMetadata is embedded in Operation.metadata during a run.
+// AIP-151: metadata must describe the current status of the LRO.
+message AnalysisOperationMetadata {
+  // Resource name of the analysis being executed.
+  string analysis = 1 [(google.api.resource_reference) = {type: "mulval.cvewatcher.dev/Analysis"}];
+
+  // Current state.
+  Analysis.State state = 2;
+
+  // When the operation was created.
+  google.protobuf.Timestamp create_time = 3;
+
+  // When the operation last changed state.
+  google.protobuf.Timestamp update_time = 4;
+}
+
+// ── Service ───────────────────────────────────────────────────────────────────
+
+service AnalysisService {
+  // CreateAnalysis submits a new MulVAL analysis job.
+  //
+  // AIP-133: standard Create pattern.
+  // AIP-151: returns an LRO immediately; poll via GetOperation.
+  //
+  // Idempotency: if analysis_id is provided and matches an existing
+  // in-progress or completed analysis, the existing operation is returned.
+  rpc CreateAnalysis(CreateAnalysisRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/api/v1/analyses"
+      body: "analysis"
+    };
+    option (google.longrunning.operation_info) = {
+      response_type: "Analysis"
+      metadata_type: "AnalysisOperationMetadata"
+    };
+  }
+
+  // GetAnalysis retrieves a completed or in-progress analysis by name.
+  //
+  // AIP-131: standard Get pattern.
+  rpc GetAnalysis(GetAnalysisRequest) returns (Analysis) {
+    option (google.api.http) = {get: "/api/v1/{name=analyses/*}"};
+  }
+
+  rpc ListAnalyses(ListAnalysesRequest) returns (ListAnalysesResponse) {
+    option (google.api.http) = {get: "/api/v1/analyses"};
+  }
+}
+
+// ── Request messages ──────────────────────────────────────────────────────────
+
+message CreateAnalysisRequest {
+  // The analysis to create.
+  Analysis analysis = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetAnalysisRequest {
+  // Resource name of the analysis to retrieve.
+  // Format: analyses/{analysis_id}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {type: "mulval.cvewatcher.dev/Analysis"}
+  ];
+}
+
+message ListAnalysesRequest {
+  // Maximum number of analyses to return.
+  // Defaults to 50 if unset or zero. Maximum is 1000.
+  int32 page_size = 1;
+
+  // Opaque token returned by a previous ListAnalyses call.
+  // Leave empty to start from the beginning.
+  string page_token = 2;
+}
+
+message ListAnalysesResponse {
+  repeated Analysis analyses = 1;
+
+  // Token to retrieve the next page.
+  // Empty when there are no more results.
+  string next_page_token = 2;
+}
