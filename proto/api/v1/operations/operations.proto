@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api.v1.operations;
+package proto.api.v1.operations;
 
 import "google/api/annotations.proto";
 import "google/longrunning/operations.proto";

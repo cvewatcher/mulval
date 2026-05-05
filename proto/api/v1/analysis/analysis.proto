@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api.v1.analysis;
+package proto.api.v1.analysis;
 
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
