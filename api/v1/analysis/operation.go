@@ -181,7 +181,11 @@ func parseArcsCSV(raw string) []*analysispb.Arc {
 			// This should not happen (MulVal cannot deal with this scale) so we silently drop
 			continue
 		}
-		out = append(out, &analysispb.Arc{Src: int32(src), Dst: int32(dst)}) //nolint:gosec //#gosec G109 -- boundaries are checked ahead
+		out = append(out, &analysispb.Arc{
+			Src: int32(src), //nolint:gosec //#gosec G109 -- boundaries are checked ahead
+			Dst: int32(dst), //nolint:gosec //#gosec G109 -- boundaries are checked ahead
+		},
+		)
 	}
 	return out
 }

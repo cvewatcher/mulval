@@ -62,7 +62,9 @@ func (m *Manager) publishCE(ctx context.Context, subject string, ce cloudevents.
 
 	if ack.Sequence <= math.MaxInt64 {
 		span.SetAttributes(
-			attribute.Int64("messaging.nats.sequence", int64(ack.Sequence)), //nolint:gosec //#gosec G115 -- only set if in bounds
+			attribute.Int64("messaging.nats.sequence",
+				int64(ack.Sequence), //nolint:gosec //#gosec G115 -- only set if in bounds
+			),
 		)
 	}
 	return nil
