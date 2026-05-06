@@ -35,6 +35,7 @@ type (
 
 		// Outputs
 
+		Namespace pulumi.StringOutput
 		PodLabels pulumi.StringMapOutput
 		Endpoint  pulumi.StringOutput
 	}
@@ -125,10 +126,10 @@ func (mv *MulVal) defaults(args *MulValArgs) *MulValArgs {
 
 func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulumi.ResourceOption) (err error) {
 	// Create namespace if required
-	namespace := args.Namespace
+	mv.Namespace = args.Namespace.ToStringOutput()
 	if args.createNamespace {
-		mv.ns, err = parts.NewNamespace(ctx, "cm-ns", &parts.NamespaceArgs{
-			Name: pulumi.String("cm-ns"),
+		mv.ns, err = parts.NewNamespace(ctx, "mulval-ns", &parts.NamespaceArgs{
+			Name: pulumi.String("mulval"),
 			AdditionalLabels: pulumi.StringMap{
 				"app.kubernetes.io/component": pulumi.String("mulval"),
 				"app.kubernetes.io/part-of":   pulumi.String("mulval"),
@@ -138,13 +139,13 @@ func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulum
 		if err != nil {
 			return err
 		}
-		namespace = mv.ns.Name
+		mv.Namespace = mv.ns.Name
 	}
 
 	// Deploy PostgreSQL
 	mv.pgsql, err = parts.NewPostgreSQL(ctx, "backend", &parts.PostgreSQLArgs{
 		DatabaseName:              pulumi.String("mulval-backend"),
-		Namespace:                 namespace,
+		Namespace:                 mv.Namespace,
 		Registry:                  args.Registry,
 		PgToAPIServerTemplate:     args.PgToAPIServerTemplate,
 		ClusterNamePrefix:         pulumi.String("mulval"),
@@ -158,7 +159,7 @@ func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulum
 
 	// Deploy NATS
 	mv.nats, err = parts.NewNats(ctx, "events", &parts.NatsArgs{
-		Namespace:        namespace,
+		Namespace:        mv.Namespace,
 		Replicas:         pulumi.Int(1), // No need for a replicated stuff
 		StorageClassName: args.StorageClassName,
 	}, opts...)
@@ -168,7 +169,7 @@ func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulum
 
 	// Deploy MulVal
 	mv.mv, err = parts.NewMulVal(ctx, "mulval", &parts.MulValArgs{
-		Namespace: namespace,
+		Namespace: mv.Namespace,
 		AdditionalLabels: pulumi.ToStringMap(map[string]string{
 			"postgresql-client": "true", // For PostgreSQL Netpol label match
 		}),
@@ -191,7 +192,7 @@ func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulum
 	// Netpol: MulVal -> PostgreSQL + MulVal -> NATS
 	mv.mvToPgsqlAndNats, err = netwv1.NewNetworkPolicy(ctx, "mulval-to-pgsql-and-nats", &netwv1.NetworkPolicyArgs{
 		Metadata: metav1.ObjectMetaArgs{
-			Namespace: namespace,
+			Namespace: mv.Namespace,
 			Labels: pulumi.StringMap{
 				"app.kubernetes.io/component": pulumi.String("mulval"),
 				"app.kubernetes.io/part-of":   pulumi.String("mulval"),
@@ -212,7 +213,7 @@ func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulum
 						netwv1.NetworkPolicyPeerArgs{
 							NamespaceSelector: metav1.LabelSelectorArgs{
 								MatchLabels: pulumi.StringMap{
-									"kubernetes.io/metadata.name": namespace,
+									"kubernetes.io/metadata.name": mv.Namespace,
 								},
 							},
 							PodSelector: metav1.LabelSelectorArgs{
@@ -233,7 +234,7 @@ func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulum
 						netwv1.NetworkPolicyPeerArgs{
 							NamespaceSelector: metav1.LabelSelectorArgs{
 								MatchLabels: pulumi.StringMap{
-									"kubernetes.io/metadata.name": namespace,
+									"kubernetes.io/metadata.name": mv.Namespace,
 								},
 							},
 							PodSelector: metav1.LabelSelectorArgs{
@@ -258,7 +259,7 @@ func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulum
 	// Netpol: NATS <- MulVal
 	mv.natsFromMv, err = netwv1.NewNetworkPolicy(ctx, "nats-from-mulval", &netwv1.NetworkPolicyArgs{
 		Metadata: metav1.ObjectMetaArgs{
-			Namespace: namespace,
+			Namespace: mv.Namespace,
 			Labels: pulumi.StringMap{
 				"app.kubernetes.io/component": pulumi.String("mulval"),
 				"app.kubernetes.io/part-of":   pulumi.String("mulval"),
@@ -278,7 +279,7 @@ func (mv *MulVal) provision(ctx *pulumi.Context, args *MulValArgs, opts ...pulum
 						netwv1.NetworkPolicyPeerArgs{
 							NamespaceSelector: metav1.LabelSelectorArgs{
 								MatchLabels: pulumi.StringMap{
-									"kubernetes.io/metadata.name": namespace,
+									"kubernetes.io/metadata.name": mv.Namespace,
 								},
 							},
 							PodSelector: metav1.LabelSelectorArgs{
@@ -308,6 +309,7 @@ func (mv *MulVal) outputs(ctx *pulumi.Context) error {
 	mv.Endpoint = mv.mv.Endpoint
 
 	return ctx.RegisterResourceOutputs(mv, pulumi.Map{
+		"namespace": mv.Namespace,
 		"podLabels": mv.PodLabels,
 		"endpoint":  mv.Endpoint,
 	})

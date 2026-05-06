@@ -37,7 +37,7 @@ func main() {
 
 		svc, err := corev1.NewService(ctx, "expose-mulval", &corev1.ServiceArgs{
 			Metadata: metav1.ObjectMetaArgs{
-				Namespace: pulumi.String(cfg.Namespace),
+				Namespace: mulval.Namespace,
 				Labels: pulumi.StringMap{
 					"app.kubernetes.io/component": pulumi.String("mulval"),
 					"app.kubernetes.io/part-of":   pulumi.String("mulval"),
@@ -65,7 +65,7 @@ func main() {
 
 		if _, err := netwv1.NewNetworkPolicy(ctx, "expose-mulval", &netwv1.NetworkPolicyArgs{
 			Metadata: metav1.ObjectMetaArgs{
-				Namespace: pulumi.String(cfg.Namespace),
+				Namespace: mulval.Namespace,
 				Labels: pulumi.StringMap{
 					"app.kubernetes.io/component": pulumi.String("mulval"),
 					"app.kubernetes.io/part-of":   pulumi.String("mulval"),
