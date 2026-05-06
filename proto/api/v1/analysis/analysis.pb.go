@@ -164,7 +164,7 @@ type Analysis struct {
 	// graph_gen.sh -a. Optional — only the default rules apply if empty.
 	IdbRules []string `protobuf:"bytes,4,rep,name=idb_rules,json=idbRules,proto3" json:"idb_rules,omitempty"`
 	// The state of the analysis.
-	State Analysis_State `protobuf:"varint,5,opt,name=state,proto3,enum=api.v1.analysis.Analysis_State" json:"state,omitempty"`
+	State Analysis_State `protobuf:"varint,5,opt,name=state,proto3,enum=proto.api.v1.analysis.Analysis_State" json:"state,omitempty"`
 	// When the analysis was created.
 	CreateTime *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	// When the analysis completed (succeeded or failed).
@@ -360,7 +360,7 @@ type Vertex struct {
 	// Prolog fact label (e.g. "execCode(webServer,apache)").
 	Fact string `protobuf:"bytes,2,opt,name=fact,proto3" json:"fact,omitempty"`
 	// Vertex type as classified by MulVAL.
-	VertexType Vertex_VertexType `protobuf:"varint,3,opt,name=vertex_type,json=vertexType,proto3,enum=api.v1.analysis.Vertex_VertexType" json:"vertex_type,omitempty"`
+	VertexType Vertex_VertexType `protobuf:"varint,3,opt,name=vertex_type,json=vertexType,proto3,enum=proto.api.v1.analysis.Vertex_VertexType" json:"vertex_type,omitempty"`
 	// Whether this vertex is the declared attackGoal.
 	IsGoal        bool `protobuf:"varint,4,opt,name=is_goal,json=isGoal,proto3" json:"is_goal,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -487,7 +487,7 @@ type AnalysisOperationMetadata struct {
 	// Resource name of the analysis being executed.
 	Analysis string `protobuf:"bytes,1,opt,name=analysis,proto3" json:"analysis,omitempty"`
 	// Current state.
-	State Analysis_State `protobuf:"varint,2,opt,name=state,proto3,enum=api.v1.analysis.Analysis_State" json:"state,omitempty"`
+	State Analysis_State `protobuf:"varint,2,opt,name=state,proto3,enum=proto.api.v1.analysis.Analysis_State" json:"state,omitempty"`
 	// When the operation was created.
 	CreateTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	// When the operation last changed state.
@@ -556,8 +556,22 @@ func (x *AnalysisOperationMetadata) GetUpdateTime() *timestamppb.Timestamp {
 
 type CreateAnalysisRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The analysis to create.
-	Analysis      *Analysis `protobuf:"bytes,1,opt,name=analysis,proto3" json:"analysis,omitempty"`
+	// Resource name. Server-assigned if not provided on creation.
+	// Format: analyses/{analysis_id}
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Client-provided idempotency key. If a request with the same
+	// analysis_id is received while a run is in progress or completed,
+	// the existing operation is returned rather than starting a new run.
+	// Optional — server assigns a UUID if omitted.
+	AnalysisId string `protobuf:"bytes,2,opt,name=analysis_id,json=analysisId,proto3" json:"analysis_id,omitempty"`
+	// EDB ground facts in MulVAL Prolog syntax, one clause per entry.
+	// Example: "hacl(internet, webServer, tcp, 80)."
+	// Required.
+	EdbFacts []string `protobuf:"bytes,3,rep,name=edb_facts,json=edbFacts,proto3" json:"edb_facts,omitempty"`
+	// Additional IDB interaction rules in MulVAL Prolog syntax.
+	// These are appended to the default MulVAL interaction rules via
+	// graph_gen.sh -a. Optional — only the default rules apply if empty.
+	IdbRules      []string `protobuf:"bytes,4,rep,name=idb_rules,json=idbRules,proto3" json:"idb_rules,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -592,9 +606,30 @@ func (*CreateAnalysisRequest) Descriptor() ([]byte, []int) {
 	return file_proto_api_v1_analysis_analysis_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CreateAnalysisRequest) GetAnalysis() *Analysis {
+func (x *CreateAnalysisRequest) GetName() string {
 	if x != nil {
-		return x.Analysis
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateAnalysisRequest) GetAnalysisId() string {
+	if x != nil {
+		return x.AnalysisId
+	}
+	return ""
+}
+
+func (x *CreateAnalysisRequest) GetEdbFacts() []string {
+	if x != nil {
+		return x.EdbFacts
+	}
+	return nil
+}
+
+func (x *CreateAnalysisRequest) GetIdbRules() []string {
+	if x != nil {
+		return x.IdbRules
 	}
 	return nil
 }
@@ -759,18 +794,18 @@ var File_proto_api_v1_analysis_analysis_proto protoreflect.FileDescriptor
 
 const file_proto_api_v1_analysis_analysis_proto_rawDesc = "" +
 	"\n" +
-	"$proto/api/v1/analysis/analysis.proto\x12\x0fapi.v1.analysis\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a#google/longrunning/operations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcb\x04\n" +
+	"$proto/api/v1/analysis/analysis.proto\x12\x15proto.api.v1.analysis\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a#google/longrunning/operations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd7\x04\n" +
 	"\bAnalysis\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vanalysis_id\x18\x02 \x01(\tR\n" +
 	"analysisId\x12 \n" +
 	"\tedb_facts\x18\x03 \x03(\tB\x03\xe0A\x02R\bedbFacts\x12\x1b\n" +
-	"\tidb_rules\x18\x04 \x03(\tR\bidbRules\x12:\n" +
-	"\x05state\x18\x05 \x01(\x0e2\x1f.api.v1.analysis.Analysis.StateB\x03\xe0A\x03R\x05state\x12@\n" +
+	"\tidb_rules\x18\x04 \x03(\tR\bidbRules\x12@\n" +
+	"\x05state\x18\x05 \x01(\x0e2%.proto.api.v1.analysis.Analysis.StateB\x03\xe0A\x03R\x05state\x12@\n" +
 	"\vcreate_time\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
 	"createTime\x12:\n" +
-	"\bend_time\x18\a \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\aendTime\x12D\n" +
-	"\fattack_graph\x18\b \x01(\v2\x1c.api.v1.analysis.AttackGraphB\x03\xe0A\x03R\vattackGraph\x12\x19\n" +
+	"\bend_time\x18\a \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\aendTime\x12J\n" +
+	"\fattack_graph\x18\b \x01(\v2\".proto.api.v1.analysis.AttackGraphB\x03\xe0A\x03R\vattackGraph\x12\x19\n" +
 	"\x05error\x18\t \x01(\tB\x03\xe0A\x03R\x05error\"b\n" +
 	"\x05State\x12\x15\n" +
 	"\x11STATE_UNSPECIFIED\x10\x00\x12\v\n" +
@@ -780,17 +815,17 @@ const file_proto_api_v1_analysis_analysis_proto_rawDesc = "" +
 	"\n" +
 	"\x06FAILED\x10\x04\x12\r\n" +
 	"\tCANCELLED\x10\x05:L\xeaAI\n" +
-	"\x1emulval.cvewatcher.dev/Analysis\x12\x13analyses/{analysis}*\banalyses2\banalysis\"\xc4\x01\n" +
+	"\x1emulval.cvewatcher.dev/Analysis\x12\x13analyses/{analysis}*\banalyses2\banalysis\"\xd0\x01\n" +
 	"\vAttackGraph\x12!\n" +
 	"\fvertices_csv\x18\x01 \x01(\tR\vverticesCsv\x12\x19\n" +
 	"\barcs_csv\x18\x02 \x01(\tR\aarcsCsv\x12\x18\n" +
-	"\asummary\x18\x03 \x01(\tR\asummary\x123\n" +
-	"\bvertices\x18\x04 \x03(\v2\x17.api.v1.analysis.VertexR\bvertices\x12(\n" +
-	"\x04arcs\x18\x05 \x03(\v2\x14.api.v1.analysis.ArcR\x04arcs\"\xd0\x01\n" +
+	"\asummary\x18\x03 \x01(\tR\asummary\x129\n" +
+	"\bvertices\x18\x04 \x03(\v2\x1d.proto.api.v1.analysis.VertexR\bvertices\x12.\n" +
+	"\x04arcs\x18\x05 \x03(\v2\x1a.proto.api.v1.analysis.ArcR\x04arcs\"\xd6\x01\n" +
 	"\x06Vertex\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
-	"\x04fact\x18\x02 \x01(\tR\x04fact\x12C\n" +
-	"\vvertex_type\x18\x03 \x01(\x0e2\".api.v1.analysis.Vertex.VertexTypeR\n" +
+	"\x04fact\x18\x02 \x01(\tR\x04fact\x12I\n" +
+	"\vvertex_type\x18\x03 \x01(\x0e2(.proto.api.v1.analysis.Vertex.VertexTypeR\n" +
 	"vertexType\x12\x17\n" +
 	"\ais_goal\x18\x04 \x01(\bR\x06isGoal\"D\n" +
 	"\n" +
@@ -801,32 +836,36 @@ const file_proto_api_v1_analysis_analysis_proto_rawDesc = "" +
 	"\x02OR\x10\x03\")\n" +
 	"\x03Arc\x12\x10\n" +
 	"\x03src\x18\x01 \x01(\x05R\x03src\x12\x10\n" +
-	"\x03dst\x18\x02 \x01(\x05R\x03dst\"\x8d\x02\n" +
+	"\x03dst\x18\x02 \x01(\x05R\x03dst\"\x93\x02\n" +
 	"\x19AnalysisOperationMetadata\x12?\n" +
 	"\banalysis\x18\x01 \x01(\tB#\xfaA \n" +
-	"\x1emulval.cvewatcher.dev/AnalysisR\banalysis\x125\n" +
-	"\x05state\x18\x02 \x01(\x0e2\x1f.api.v1.analysis.Analysis.StateR\x05state\x12;\n" +
+	"\x1emulval.cvewatcher.dev/AnalysisR\banalysis\x12;\n" +
+	"\x05state\x18\x02 \x01(\x0e2%.proto.api.v1.analysis.Analysis.StateR\x05state\x12;\n" +
 	"\vcreate_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"createTime\x12;\n" +
 	"\vupdate_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"updateTime\"S\n" +
-	"\x15CreateAnalysisRequest\x12:\n" +
-	"\banalysis\x18\x01 \x01(\v2\x19.api.v1.analysis.AnalysisB\x03\xe0A\x02R\banalysis\"P\n" +
+	"updateTime\"\x8b\x01\n" +
+	"\x15CreateAnalysisRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
+	"\vanalysis_id\x18\x02 \x01(\tR\n" +
+	"analysisId\x12 \n" +
+	"\tedb_facts\x18\x03 \x03(\tB\x03\xe0A\x02R\bedbFacts\x12\x1b\n" +
+	"\tidb_rules\x18\x04 \x03(\tR\bidbRules\"P\n" +
 	"\x12GetAnalysisRequest\x12:\n" +
 	"\x04name\x18\x01 \x01(\tB&\xe0A\x02\xfaA \n" +
 	"\x1emulval.cvewatcher.dev/AnalysisR\x04name\"Q\n" +
 	"\x13ListAnalysesRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x02 \x01(\tR\tpageToken\"u\n" +
-	"\x14ListAnalysesResponse\x125\n" +
-	"\banalyses\x18\x01 \x03(\v2\x19.api.v1.analysis.AnalysisR\banalyses\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken2\xa0\x03\n" +
-	"\x0fAnalysisService\x12\xa3\x01\n" +
-	"\x0eCreateAnalysis\x12&.api.v1.analysis.CreateAnalysisRequest\x1a\x1d.google.longrunning.Operation\"J\xcaA%\n" +
-	"\bAnalysis\x12\x19AnalysisOperationMetadata\x82\xd3\xe4\x93\x02\x1c:\banalysis\"\x10/api/v1/analyses\x12p\n" +
-	"\vGetAnalysis\x12#.api.v1.analysis.GetAnalysisRequest\x1a\x19.api.v1.analysis.Analysis\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/api/v1/{name=analyses/*}\x12u\n" +
-	"\fListAnalyses\x12$.api.v1.analysis.ListAnalysesRequest\x1a%.api.v1.analysis.ListAnalysesResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/v1/analysesB=Z;github.com/cvewatcher/mulval/proto/api/v1/analysis;analysisb\x06proto3"
+	"page_token\x18\x02 \x01(\tR\tpageToken\"{\n" +
+	"\x14ListAnalysesResponse\x12;\n" +
+	"\banalyses\x18\x01 \x03(\v2\x1f.proto.api.v1.analysis.AnalysisR\banalyses\x12&\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken2\xb8\x03\n" +
+	"\x0fAnalysisService\x12\xa2\x01\n" +
+	"\x0eCreateAnalysis\x12,.proto.api.v1.analysis.CreateAnalysisRequest\x1a\x1d.google.longrunning.Operation\"C\xcaA%\n" +
+	"\bAnalysis\x12\x19AnalysisOperationMetadata\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/v1/analyses\x12|\n" +
+	"\vGetAnalysis\x12).proto.api.v1.analysis.GetAnalysisRequest\x1a\x1f.proto.api.v1.analysis.Analysis\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/api/v1/{name=analyses/*}\x12\x81\x01\n" +
+	"\fListAnalyses\x12*.proto.api.v1.analysis.ListAnalysesRequest\x1a+.proto.api.v1.analysis.ListAnalysesResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/v1/analysesB=Z;github.com/cvewatcher/mulval/proto/api/v1/analysis;analysisb\x06proto3"
 
 var (
 	file_proto_api_v1_analysis_analysis_proto_rawDescOnce sync.Once
@@ -843,44 +882,43 @@ func file_proto_api_v1_analysis_analysis_proto_rawDescGZIP() []byte {
 var file_proto_api_v1_analysis_analysis_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_proto_api_v1_analysis_analysis_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_proto_api_v1_analysis_analysis_proto_goTypes = []any{
-	(Analysis_State)(0),               // 0: api.v1.analysis.Analysis.State
-	(Vertex_VertexType)(0),            // 1: api.v1.analysis.Vertex.VertexType
-	(*Analysis)(nil),                  // 2: api.v1.analysis.Analysis
-	(*AttackGraph)(nil),               // 3: api.v1.analysis.AttackGraph
-	(*Vertex)(nil),                    // 4: api.v1.analysis.Vertex
-	(*Arc)(nil),                       // 5: api.v1.analysis.Arc
-	(*AnalysisOperationMetadata)(nil), // 6: api.v1.analysis.AnalysisOperationMetadata
-	(*CreateAnalysisRequest)(nil),     // 7: api.v1.analysis.CreateAnalysisRequest
-	(*GetAnalysisRequest)(nil),        // 8: api.v1.analysis.GetAnalysisRequest
-	(*ListAnalysesRequest)(nil),       // 9: api.v1.analysis.ListAnalysesRequest
-	(*ListAnalysesResponse)(nil),      // 10: api.v1.analysis.ListAnalysesResponse
+	(Analysis_State)(0),               // 0: proto.api.v1.analysis.Analysis.State
+	(Vertex_VertexType)(0),            // 1: proto.api.v1.analysis.Vertex.VertexType
+	(*Analysis)(nil),                  // 2: proto.api.v1.analysis.Analysis
+	(*AttackGraph)(nil),               // 3: proto.api.v1.analysis.AttackGraph
+	(*Vertex)(nil),                    // 4: proto.api.v1.analysis.Vertex
+	(*Arc)(nil),                       // 5: proto.api.v1.analysis.Arc
+	(*AnalysisOperationMetadata)(nil), // 6: proto.api.v1.analysis.AnalysisOperationMetadata
+	(*CreateAnalysisRequest)(nil),     // 7: proto.api.v1.analysis.CreateAnalysisRequest
+	(*GetAnalysisRequest)(nil),        // 8: proto.api.v1.analysis.GetAnalysisRequest
+	(*ListAnalysesRequest)(nil),       // 9: proto.api.v1.analysis.ListAnalysesRequest
+	(*ListAnalysesResponse)(nil),      // 10: proto.api.v1.analysis.ListAnalysesResponse
 	(*timestamppb.Timestamp)(nil),     // 11: google.protobuf.Timestamp
 	(*longrunningpb.Operation)(nil),   // 12: google.longrunning.Operation
 }
 var file_proto_api_v1_analysis_analysis_proto_depIdxs = []int32{
-	0,  // 0: api.v1.analysis.Analysis.state:type_name -> api.v1.analysis.Analysis.State
-	11, // 1: api.v1.analysis.Analysis.create_time:type_name -> google.protobuf.Timestamp
-	11, // 2: api.v1.analysis.Analysis.end_time:type_name -> google.protobuf.Timestamp
-	3,  // 3: api.v1.analysis.Analysis.attack_graph:type_name -> api.v1.analysis.AttackGraph
-	4,  // 4: api.v1.analysis.AttackGraph.vertices:type_name -> api.v1.analysis.Vertex
-	5,  // 5: api.v1.analysis.AttackGraph.arcs:type_name -> api.v1.analysis.Arc
-	1,  // 6: api.v1.analysis.Vertex.vertex_type:type_name -> api.v1.analysis.Vertex.VertexType
-	0,  // 7: api.v1.analysis.AnalysisOperationMetadata.state:type_name -> api.v1.analysis.Analysis.State
-	11, // 8: api.v1.analysis.AnalysisOperationMetadata.create_time:type_name -> google.protobuf.Timestamp
-	11, // 9: api.v1.analysis.AnalysisOperationMetadata.update_time:type_name -> google.protobuf.Timestamp
-	2,  // 10: api.v1.analysis.CreateAnalysisRequest.analysis:type_name -> api.v1.analysis.Analysis
-	2,  // 11: api.v1.analysis.ListAnalysesResponse.analyses:type_name -> api.v1.analysis.Analysis
-	7,  // 12: api.v1.analysis.AnalysisService.CreateAnalysis:input_type -> api.v1.analysis.CreateAnalysisRequest
-	8,  // 13: api.v1.analysis.AnalysisService.GetAnalysis:input_type -> api.v1.analysis.GetAnalysisRequest
-	9,  // 14: api.v1.analysis.AnalysisService.ListAnalyses:input_type -> api.v1.analysis.ListAnalysesRequest
-	12, // 15: api.v1.analysis.AnalysisService.CreateAnalysis:output_type -> google.longrunning.Operation
-	2,  // 16: api.v1.analysis.AnalysisService.GetAnalysis:output_type -> api.v1.analysis.Analysis
-	10, // 17: api.v1.analysis.AnalysisService.ListAnalyses:output_type -> api.v1.analysis.ListAnalysesResponse
-	15, // [15:18] is the sub-list for method output_type
-	12, // [12:15] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	0,  // 0: proto.api.v1.analysis.Analysis.state:type_name -> proto.api.v1.analysis.Analysis.State
+	11, // 1: proto.api.v1.analysis.Analysis.create_time:type_name -> google.protobuf.Timestamp
+	11, // 2: proto.api.v1.analysis.Analysis.end_time:type_name -> google.protobuf.Timestamp
+	3,  // 3: proto.api.v1.analysis.Analysis.attack_graph:type_name -> proto.api.v1.analysis.AttackGraph
+	4,  // 4: proto.api.v1.analysis.AttackGraph.vertices:type_name -> proto.api.v1.analysis.Vertex
+	5,  // 5: proto.api.v1.analysis.AttackGraph.arcs:type_name -> proto.api.v1.analysis.Arc
+	1,  // 6: proto.api.v1.analysis.Vertex.vertex_type:type_name -> proto.api.v1.analysis.Vertex.VertexType
+	0,  // 7: proto.api.v1.analysis.AnalysisOperationMetadata.state:type_name -> proto.api.v1.analysis.Analysis.State
+	11, // 8: proto.api.v1.analysis.AnalysisOperationMetadata.create_time:type_name -> google.protobuf.Timestamp
+	11, // 9: proto.api.v1.analysis.AnalysisOperationMetadata.update_time:type_name -> google.protobuf.Timestamp
+	2,  // 10: proto.api.v1.analysis.ListAnalysesResponse.analyses:type_name -> proto.api.v1.analysis.Analysis
+	7,  // 11: proto.api.v1.analysis.AnalysisService.CreateAnalysis:input_type -> proto.api.v1.analysis.CreateAnalysisRequest
+	8,  // 12: proto.api.v1.analysis.AnalysisService.GetAnalysis:input_type -> proto.api.v1.analysis.GetAnalysisRequest
+	9,  // 13: proto.api.v1.analysis.AnalysisService.ListAnalyses:input_type -> proto.api.v1.analysis.ListAnalysesRequest
+	12, // 14: proto.api.v1.analysis.AnalysisService.CreateAnalysis:output_type -> google.longrunning.Operation
+	2,  // 15: proto.api.v1.analysis.AnalysisService.GetAnalysis:output_type -> proto.api.v1.analysis.Analysis
+	10, // 16: proto.api.v1.analysis.AnalysisService.ListAnalyses:output_type -> proto.api.v1.analysis.ListAnalysesResponse
+	14, // [14:17] is the sub-list for method output_type
+	11, // [11:14] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_proto_api_v1_analysis_analysis_proto_init() }

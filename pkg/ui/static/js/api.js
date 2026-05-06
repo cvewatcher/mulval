@@ -40,7 +40,7 @@ var api = {
   // createAnalysis submits a new analysis and returns a longrunningOperation.
   createAnalysis: function(edbFacts, idbRules, analysisId) {
     var body = { edbFacts: edbFacts, idbRules: idbRules };
-    if (analysisId) body.analysis.analysisId = analysisId;
+    if (analysisId) body.analysisId = analysisId;
     return _fetch('POST', '/analyses', body);
   },
 

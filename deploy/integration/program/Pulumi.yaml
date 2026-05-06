@@ -1,0 +1,19 @@
+name: mulval-integration-tests
+runtime: go
+description: IaC for a deployment of MulVal (as a Service) on Kubernetes, for Integration Tests.
+config:
+  namespace:
+    type: string
+    default: ""
+  tag:
+    type: string
+    default: "latest"
+  registry:
+    type: string
+    default: ""
+  romeo-claim-name:
+    type: string
+    default: ""
+
+author: CVEWatcher
+license: Apache-2.0

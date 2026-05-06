@@ -38,6 +38,12 @@ func (fe *FromEnv) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
+var _ yaml.Marshaler = (*FromEnv)(nil)
+
+func (fe *FromEnv) MarshalYAML() (any, error) {
+	return fe.Content, nil
+}
+
 func (fe FromEnv) JSONSchema() *jsonschema.Schema {
 	subObj := jsonschema.NewProperties()
 	subObj.Set("from_env", &jsonschema.Schema{

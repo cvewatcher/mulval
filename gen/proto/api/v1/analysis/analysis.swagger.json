@@ -74,12 +74,11 @@
         },
         "parameters": [
           {
-            "name": "analysis",
-            "description": "The analysis to create.",
+            "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/analysisAnalysis"
+              "$ref": "#/definitions/analysisCreateAnalysisRequest"
             }
           }
         ],
@@ -255,6 +254,36 @@
         }
       },
       "description": "AttackGraph is the output of a completed Analysis."
+    },
+    "analysisCreateAnalysisRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Resource name. Server-assigned if not provided on creation.\nFormat: analyses/{analysis_id}"
+        },
+        "analysisId": {
+          "type": "string",
+          "description": "Client-provided idempotency key. If a request with the same\nanalysis_id is received while a run is in progress or completed,\nthe existing operation is returned rather than starting a new run.\nOptional — server assigns a UUID if omitted."
+        },
+        "edbFacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "EDB ground facts in MulVAL Prolog syntax, one clause per entry.\nExample: \"hacl(internet, webServer, tcp, 80).\"\nRequired."
+        },
+        "idbRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional IDB interaction rules in MulVAL Prolog syntax.\nThese are appended to the default MulVAL interaction rules via\ngraph_gen.sh -a. Optional — only the default rules apply if empty."
+        }
+      },
+      "required": [
+        "edbFacts"
+      ]
     },
     "analysisListAnalysesResponse": {
       "type": "object",

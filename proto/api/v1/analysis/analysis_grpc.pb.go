@@ -20,9 +20,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AnalysisService_CreateAnalysis_FullMethodName = "/api.v1.analysis.AnalysisService/CreateAnalysis"
-	AnalysisService_GetAnalysis_FullMethodName    = "/api.v1.analysis.AnalysisService/GetAnalysis"
-	AnalysisService_ListAnalyses_FullMethodName   = "/api.v1.analysis.AnalysisService/ListAnalyses"
+	AnalysisService_CreateAnalysis_FullMethodName = "/proto.api.v1.analysis.AnalysisService/CreateAnalysis"
+	AnalysisService_GetAnalysis_FullMethodName    = "/proto.api.v1.analysis.AnalysisService/GetAnalysis"
+	AnalysisService_ListAnalyses_FullMethodName   = "/proto.api.v1.analysis.AnalysisService/ListAnalyses"
 )
 
 // AnalysisServiceClient is the client API for AnalysisService service.
@@ -197,7 +197,7 @@ func _AnalysisService_ListAnalyses_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AnalysisService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v1.analysis.AnalysisService",
+	ServiceName: "proto.api.v1.analysis.AnalysisService",
 	HandlerType: (*AnalysisServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

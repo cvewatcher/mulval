@@ -40,7 +40,7 @@ func request_AnalysisService_CreateAnalysis_0(ctx context.Context, marshaler run
 		protoReq CreateAnalysisRequest
 		metadata runtime.ServerMetadata
 	)
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq.Analysis); err != nil && !errors.Is(err, io.EOF) {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	if req.Body != nil {
@@ -55,7 +55,7 @@ func local_request_AnalysisService_CreateAnalysis_0(ctx context.Context, marshal
 		protoReq CreateAnalysisRequest
 		metadata runtime.ServerMetadata
 	)
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq.Analysis); err != nil && !errors.Is(err, io.EOF) {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.CreateAnalysis(ctx, &protoReq)
@@ -148,7 +148,7 @@ func RegisterAnalysisServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.v1.analysis.AnalysisService/CreateAnalysis", runtime.WithHTTPPathPattern("/api/v1/analyses"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.api.v1.analysis.AnalysisService/CreateAnalysis", runtime.WithHTTPPathPattern("/api/v1/analyses"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -168,7 +168,7 @@ func RegisterAnalysisServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.v1.analysis.AnalysisService/GetAnalysis", runtime.WithHTTPPathPattern("/api/v1/{name=analyses/*}"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.api.v1.analysis.AnalysisService/GetAnalysis", runtime.WithHTTPPathPattern("/api/v1/{name=analyses/*}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -188,7 +188,7 @@ func RegisterAnalysisServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.v1.analysis.AnalysisService/ListAnalyses", runtime.WithHTTPPathPattern("/api/v1/analyses"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.api.v1.analysis.AnalysisService/ListAnalyses", runtime.WithHTTPPathPattern("/api/v1/analyses"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -246,7 +246,7 @@ func RegisterAnalysisServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/api.v1.analysis.AnalysisService/CreateAnalysis", runtime.WithHTTPPathPattern("/api/v1/analyses"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/proto.api.v1.analysis.AnalysisService/CreateAnalysis", runtime.WithHTTPPathPattern("/api/v1/analyses"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -263,7 +263,7 @@ func RegisterAnalysisServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/api.v1.analysis.AnalysisService/GetAnalysis", runtime.WithHTTPPathPattern("/api/v1/{name=analyses/*}"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/proto.api.v1.analysis.AnalysisService/GetAnalysis", runtime.WithHTTPPathPattern("/api/v1/{name=analyses/*}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -280,7 +280,7 @@ func RegisterAnalysisServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/api.v1.analysis.AnalysisService/ListAnalyses", runtime.WithHTTPPathPattern("/api/v1/analyses"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/proto.api.v1.analysis.AnalysisService/ListAnalyses", runtime.WithHTTPPathPattern("/api/v1/analyses"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

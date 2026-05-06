@@ -1,0 +1,52 @@
+name: mulval-as-a-service
+runtime: go
+description: IaC for a deployment of MulVal (as a Service) on Kubernetes.
+config:
+  namespace:
+    type: string
+    default: ""
+  tag:
+    type: string
+    default: "latest"
+  registry:
+    type: string
+    default: ""
+  log-level:
+    type: string
+    default: "info"
+  pvc-access-modes:
+    type: array
+    items:
+      type: string
+    default:
+      - "ReadWriteOnce"
+  pvc-storage-size:
+    type: string
+    default: "2Gi"
+  pg-to-api-server-template:
+    type: string
+    default: ""
+  postgres-operator-namespace:
+    type: string
+    default: cnpg-system
+  storage-class-name:
+    type: string
+    default: ""
+  romeo-claim-name:
+    type: string
+    default: ""
+  swagger:
+    type: boolean
+    default: false
+  ui:
+    type: boolean
+    default: false
+  otel.endpoint:
+    type: string
+    default: ""
+  otel.insecure:
+    type: boolean
+    default: false
+
+author: CVEWatcher
+license: Apache-2.0

@@ -158,7 +158,7 @@ service AnalysisService {
   rpc CreateAnalysis(CreateAnalysisRequest) returns (google.longrunning.Operation) {
     option (google.api.http) = {
       post: "/api/v1/analyses"
-      body: "analysis"
+      body: "*"
     };
     option (google.longrunning.operation_info) = {
       response_type: "Analysis"
@@ -181,8 +181,25 @@ service AnalysisService {
 // ── Request messages ──────────────────────────────────────────────────────────
 
 message CreateAnalysisRequest {
-  // The analysis to create.
-  Analysis analysis = 1 [(google.api.field_behavior) = REQUIRED];
+  // Resource name. Server-assigned if not provided on creation.
+  // Format: analyses/{analysis_id}
+  string name = 1;
+
+  // Client-provided idempotency key. If a request with the same
+  // analysis_id is received while a run is in progress or completed,
+  // the existing operation is returned rather than starting a new run.
+  // Optional — server assigns a UUID if omitted.
+  string analysis_id = 2;
+
+  // EDB ground facts in MulVAL Prolog syntax, one clause per entry.
+  // Example: "hacl(internet, webServer, tcp, 80)."
+  // Required.
+  repeated string edb_facts = 3 [(google.api.field_behavior) = REQUIRED];
+
+  // Additional IDB interaction rules in MulVAL Prolog syntax.
+  // These are appended to the default MulVAL interaction rules via
+  // graph_gen.sh -a. Optional — only the default rules apply if empty.
+  repeated string idb_rules = 4;
 }
 
 message GetAnalysisRequest {

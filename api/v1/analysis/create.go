@@ -31,15 +31,12 @@ func (a *Analyzer) CreateAnalysis(
 	ctx context.Context,
 	req *analysispb.CreateAnalysisRequest,
 ) (*longrunningpb.Operation, error) {
-	if req.Analysis == nil {
-		return nil, status.Error(codes.InvalidArgument, "analysis is required")
-	}
-	if len(req.Analysis.EdbFacts) == 0 {
+	if len(req.EdbFacts) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "analysis.edb_facts must not be empty")
 	}
 
-	edb := strings.Join(req.Analysis.EdbFacts, "\n")
-	idb := strings.Join(req.Analysis.IdbRules, "\n")
+	edb := strings.Join(req.EdbFacts, "\n")
+	idb := strings.Join(req.IdbRules, "\n")
 
 	// ── Cache lookup ─────────────────────────────────────────────────────────
 	// If an identical set of inputs already produced a SUCCEEDED analysis,
@@ -55,8 +52,8 @@ func (a *Analyzer) CreateAnalysis(
 	// AIP-151: callers may supply an idempotency key via analysis_id.
 	// If omitted, generate a new UUID-based operation name.
 	var opName string
-	if req.Analysis.AnalysisId != "" {
-		opName = "operations/" + req.Analysis.AnalysisId
+	if req.AnalysisId != "" {
+		opName = "operations/" + req.AnalysisId
 	} else {
 		opName = store.NewOperationName()
 	}
