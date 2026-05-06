@@ -3,7 +3,7 @@ module github.com/cvewatcher/mulval/deploy/integration/program
 go 1.26.2
 
 require (
-	github.com/cvewatcher/mulval/deploy v0.0.0-20260506111326-c35cfa1c3ee4
+	github.com/cvewatcher/mulval/deploy v0.0.0-20260506143353-dab78946380b
 	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.30.0
 	github.com/pulumi/pulumi/sdk/v3 v3.234.0
 )
@@ -36,7 +36,7 @@ require (
 	github.com/clipperhouse/displaywidth v0.11.0 // indirect
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/cloudflare/circl v1.6.3 // indirect
-	github.com/cvewatcher/mulval v0.0.0-00010101000000-000000000000 // indirect
+	github.com/cvewatcher/mulval v0.0.0-20260506143228-e453905cae1f // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/djherbis/times v1.5.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
