@@ -2,6 +2,7 @@ package analysis
 
 import (
 	"encoding/csv"
+	"math"
 	"strconv"
 	"strings"
 
@@ -55,10 +56,11 @@ func OperationFromStore(op *store.Operation) *longrunningpb.Operation {
 		Done: op.State.IsTerminal(),
 	}
 
-	if op.State == store.StateSucceeded {
+	switch op.State {
+	case store.StateSucceeded:
 		resp, _ := anypb.New(analysis)
 		lro.Result = &longrunningpb.Operation_Response{Response: resp}
-	} else if op.State == store.StateFailed {
+	case store.StateFailed:
 		errMsg := ""
 		if op.Error != nil {
 			errMsg = *op.Error
@@ -125,13 +127,17 @@ func parseVerticesCSV(raw string) []*analysispb.Vertex {
 		if err != nil {
 			continue
 		}
+		if id > math.MaxInt32 || id < math.MinInt32 {
+			// This should not happen (MulVal cannot deal with this scale) so we silently drop
+			continue
+		}
 		fact := strings.Trim(strings.TrimSpace(rec[1]), "")
 		vt := toVertexType(strings.Trim(strings.TrimSpace(rec[2]), ""))
 		// Column 4 (index 3) is isFact; no dedicated isGoal column.
 		// Vertex 1 is always the attackGoal root in MulVAL output.
 		isGoal := id == 1
 		out = append(out, &analysispb.Vertex{
-			Id:         int32(id),
+			Id:         int32(id), //nolint:gosec //#gosec G109 -- boundaries are checked ahead
 			Fact:       fact,
 			VertexType: vt,
 			IsGoal:     isGoal,
@@ -171,7 +177,11 @@ func parseArcsCSV(raw string) []*analysispb.Arc {
 		if err1 != nil || err2 != nil {
 			continue
 		}
-		out = append(out, &analysispb.Arc{Src: int32(src), Dst: int32(dst)})
+		if src > math.MaxInt32 || src < math.MinInt32 || dst > math.MaxInt32 || dst < math.MinInt32 {
+			// This should not happen (MulVal cannot deal with this scale) so we silently drop
+			continue
+		}
+		out = append(out, &analysispb.Arc{Src: int32(src), Dst: int32(dst)}) //nolint:gosec //#gosec G109 -- boundaries are checked ahead
 	}
 	return out
 }

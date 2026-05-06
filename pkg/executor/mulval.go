@@ -152,7 +152,7 @@ func (e *Executor) runMulval(rc *RunContext, op *store.Operation) (*mulvalOutput
 	if err := os.WriteFile(
 		filepath.Join(workDir, "input.P"),
 		[]byte(op.EDBFacts+"\n"),
-		0o644,
+		0o600,
 	); err != nil {
 		return nil, fmt.Errorf("write input.P: %w", err)
 	}
@@ -161,7 +161,7 @@ func (e *Executor) runMulval(rc *RunContext, op *store.Operation) (*mulvalOutput
 	args := []string{"-l"}
 	if strings.TrimSpace(op.IDBRules) != "" {
 		rulesPath := filepath.Join(workDir, "extra_rules.P")
-		if err := os.WriteFile(rulesPath, []byte(op.IDBRules+"\n"), 0o644); err != nil {
+		if err := os.WriteFile(rulesPath, []byte(op.IDBRules+"\n"), 0o600); err != nil {
 			return nil, fmt.Errorf("write extra_rules.P: %w", err)
 		}
 		args = append(args, "-a", "extra_rules.P")

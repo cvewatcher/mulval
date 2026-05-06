@@ -244,7 +244,8 @@ func (m *Manager) SubscribeCancel(ctx context.Context, opID string, handler func
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				msgs, err := cons.Fetch(1, jetstream.FetchMaxWait(5*time.Second)) // <0.2 cancel/s is realistic, else is clearly event broker spamming
+				// <0.2 cancel/s is realistic, else is clearly event broker spamming
+				msgs, err := cons.Fetch(1, jetstream.FetchMaxWait(5*time.Second))
 				if err != nil {
 					span.RecordError(err)
 					continue

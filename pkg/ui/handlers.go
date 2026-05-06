@@ -7,16 +7,22 @@ import (
 	"strings"
 )
 
+type RenderParams struct {
+	Page          string
+	AnalysisName  string
+	OperationName string
+}
+
 func handleAnalyses(base *template.Template) (http.HandlerFunc, error) {
 	tmpl, err := clonePage(base, "templates/analyses.html")
 	if err != nil {
 		return nil, err
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		render(w, tmpl, map[string]any{
-			"Page":          "analyses",
-			"AnalysisName":  "",
-			"OperationName": "",
+		render(w, tmpl, RenderParams{
+			Page:          "analyses",
+			AnalysisName:  "",
+			OperationName: "",
 		})
 	}, nil
 }
@@ -27,10 +33,10 @@ func handleCreate(base *template.Template) (http.HandlerFunc, error) {
 		return nil, err
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		render(w, tmpl, map[string]any{
-			"Page":          "create",
-			"AnalysisName":  "",
-			"OperationName": "",
+		render(w, tmpl, RenderParams{
+			Page:          "create",
+			AnalysisName:  "",
+			OperationName: "",
 		})
 	}, nil
 }
@@ -53,10 +59,10 @@ func handleAnalysis(base *template.Template) (http.HandlerFunc, error) {
 		uuid := strings.TrimPrefix(analysisName, "analyses/")
 		opName := "operations/" + uuid
 
-		render(w, tmpl, map[string]any{
-			"Page":          "analysis",
-			"AnalysisName":  analysisName,
-			"OperationName": opName,
+		render(w, tmpl, RenderParams{
+			Page:          "analysis",
+			AnalysisName:  analysisName,
+			OperationName: opName,
 		})
 	}, nil
 }

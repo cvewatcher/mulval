@@ -24,7 +24,7 @@ func healthcheck(_ context.Context) http.Handler {
 	}
 
 	// PostgreSQL
-	h.Register(health.Config{
+	_ = h.Register(health.Config{
 		Name:    "postgresql",
 		Timeout: 3 * time.Second,
 		Check: func(ctx context.Context) error {

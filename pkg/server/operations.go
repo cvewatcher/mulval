@@ -2,6 +2,7 @@ package server
 
 import (
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -46,7 +47,14 @@ func getOrListOperationsHTTPHandler(mux *runtime.ServeMux, srv longrunningpb.Ope
 						status.Errorf(codes.InvalidArgument, "invalid page size: %v", err))
 					return
 				}
-				pageSize = int32(i)
+				if i > math.MaxInt32 || i < math.MinInt32 {
+					marshaler, _ := runtime.MarshalerForRequest(mux, r)
+					runtime.HTTPError(r.Context(), mux, marshaler, w, r,
+						status.Errorf(codes.InvalidArgument, "invalid page size: out of bounds"),
+					)
+					return
+				}
+				pageSize = int32(i) //nolint:gosec //#gosec G109 -- boundaries are checked ahead
 			}
 			resp, err := srv.ListOperations(r.Context(), &longrunningpb.ListOperationsRequest{
 				Name:      parent,

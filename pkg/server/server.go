@@ -184,7 +184,7 @@ func (s *Server) newHTTPServer(ctx context.Context, grpcWebHandler http.Handler)
 	// Add UI if requested
 	if s.UI {
 		mux.Handle("/", http.RedirectHandler("/ui", http.StatusSeeOther))
-		ui.Register(mux)
+		_ = ui.Register(mux)
 	}
 
 	// Add swagger if requested

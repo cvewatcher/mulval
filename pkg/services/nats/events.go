@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -59,9 +60,11 @@ func (m *Manager) publishCE(ctx context.Context, subject string, ce cloudevents.
 		return fmt.Errorf("publish %s: %w", subject, err)
 	}
 
-	span.SetAttributes(
-		attribute.Int64("messaging.nats.sequence", int64(ack.Sequence)),
-	)
+	if ack.Sequence <= math.MaxInt64 {
+		span.SetAttributes(
+			attribute.Int64("messaging.nats.sequence", int64(ack.Sequence)), //nolint:gosec //#gosec G115 -- only set if in bounds
+		)
+	}
 	return nil
 }
 
