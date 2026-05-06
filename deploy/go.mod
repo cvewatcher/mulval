@@ -2,12 +2,10 @@ module github.com/cvewatcher/mulval/deploy
 
 go 1.26.2
 
-replace github.com/cvewatcher/mulval => ../
-
 require (
 	cloud.google.com/go/longrunning v0.12.0
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/cvewatcher/mulval v0.0.0-20260506104312-94b76115b4d5
+	github.com/cvewatcher/mulval v0.0.0-20260506111326-c35cfa1c3ee4
 	github.com/pkg/errors v0.9.1
 	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.30.0
 	github.com/pulumi/pulumi-random/sdk/v4 v4.19.2
