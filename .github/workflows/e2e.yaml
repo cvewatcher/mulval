@@ -104,6 +104,14 @@ jobs:
             --set image.pullPolicy=IfNotPresent \
             --set ipam.mode=kubernetes
 
+      - name: Setup CNPG
+        run: |
+          helm repo add cnpg https://cloudnative-pg.github.io/charts
+          helm upgrade --install cnpg \
+            --namespace cnpg-system \
+            --create-namespace \
+            cnpg/cloudnative-pg
+
       - name: Export server URL
         id: server
         run: |
