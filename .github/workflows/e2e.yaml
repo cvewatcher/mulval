@@ -128,15 +128,6 @@ jobs:
         run: |
           pulumi login --local
 
-      # The following steps cleans up the GHA ubuntu environment.
-      # It is required due to Pulumi consuming large space when starting a prod-like
-      # environment for Integration Tests purposes.
-      # It removes around 25 Gib of disk space.
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
-        with:
-          docker-images: false # keep everything around here to avoid shoothing kind and local registry
-
       - name: Romeo environment
         id: env
         uses: ctfer-io/romeo/environment@c2ebcfb9f305fd5f6ef68858de82507dbac10263 # v0.2.2
