@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	longrunning "cloud.google.com/go/longrunning/autogen"
 	"cloud.google.com/go/longrunning/autogen/longrunningpb"
 	"github.com/cvewatcher/mulval/proto/api/v1/analysis"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
@@ -37,8 +36,7 @@ func Test_I_Examples(t *testing.T) {
 		ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 			cli := grpcClient(t, stack.Outputs)
 			anaCli := analysis.NewAnalysisServiceClient(cli)
-			opCli, err := longrunning.NewOperationsClient(t.Context())
-			require.NoError(t, err)
+			opCli := longrunningpb.NewOperationsClient(cli)
 
 			// Create an analysis (LRO)
 			before := time.Now()
