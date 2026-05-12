@@ -5,7 +5,7 @@ go 1.26.2
 require (
 	cloud.google.com/go/longrunning v0.12.0
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/cvewatcher/mulval v0.0.0-20260506143228-e453905cae1f
+	github.com/cvewatcher/mulval v0.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.30.0
 	github.com/pulumi/pulumi-random/sdk/v4 v4.19.2
