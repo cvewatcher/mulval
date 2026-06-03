@@ -4,7 +4,7 @@ go 1.26.2
 
 require (
 	github.com/cvewatcher/mulval/deploy v0.0.0-20260506143353-dab78946380b
-	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.31.0
+	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.31.1
 	github.com/pulumi/pulumi/sdk/v3 v3.237.0
 )
 

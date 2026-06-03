@@ -14,7 +14,7 @@ require (
 	github.com/hellofresh/health-go/v5 v5.5.5
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/invopop/jsonschema v0.14.0
-	github.com/jackc/pgx/v5 v5.9.2
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/nats-io/nats.go v1.52.0
 	github.com/pkg/errors v0.9.1
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1
