@@ -3,7 +3,7 @@ module github.com/cvewatcher/mulval
 go 1.26.2
 
 require (
-	cloud.google.com/go/longrunning v1.0.0
+	cloud.google.com/go/longrunning v1.1.0
 	github.com/bufbuild/buf v1.69.0
 	github.com/cloudevents/sdk-go/v2 v2.16.2
 	github.com/goccy/go-json v0.10.6
@@ -35,9 +35,9 @@ require (
 	go.opentelemetry.io/otel/trace v1.44.0
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.28.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20260615183401-62b3387ff324
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260615183401-62b3387ff324
-	google.golang.org/grpc v1.81.1
+	google.golang.org/genproto/googleapis/api v0.0.0-20260630182238-925bb5da69e7
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260630182238-925bb5da69e7
+	google.golang.org/grpc v1.82.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.1
 	google.golang.org/protobuf v1.36.11
 	gopkg.in/yaml.v3 v3.0.1
