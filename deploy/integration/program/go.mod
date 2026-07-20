@@ -4,7 +4,7 @@ go 1.26.2
 
 require (
 	github.com/cvewatcher/mulval/deploy v0.0.0-20260506143353-dab78946380b
-	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.31.1
+	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.33.0
 	github.com/pulumi/pulumi/sdk/v3 v3.252.0
 )
 
@@ -40,7 +40,6 @@ require (
 	github.com/djherbis/times v1.5.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
-	github.com/fatih/color v1.18.0 // indirect
 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
 	github.com/go-git/go-billy/v6 v6.0.0-alpha.1 // indirect
 	github.com/go-git/go-git/v6 v6.0.0-alpha.4 // indirect

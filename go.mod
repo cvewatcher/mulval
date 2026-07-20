@@ -3,7 +3,7 @@ module github.com/cvewatcher/mulval
 go 1.26.2
 
 require (
-	cloud.google.com/go/longrunning v1.1.0
+	cloud.google.com/go/longrunning v1.2.0
 	github.com/bufbuild/buf v1.69.0
 	github.com/cloudevents/sdk-go/v2 v2.16.2
 	github.com/goccy/go-json v0.10.6
@@ -38,7 +38,7 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20260706201446-f0a921348800
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800
 	google.golang.org/grpc v1.82.0
-	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.1
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2
 	google.golang.org/protobuf v1.36.11
 	gopkg.in/yaml.v3 v3.0.1
 )
