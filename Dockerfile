@@ -29,7 +29,7 @@ RUN go build -cover \
 
 
 # Prod stage
-FROM pandatix/mulval:v0.1.1@sha256:080c2e0e7d598fa700bbaae71236c905239e895cdd356af79630651922548f7f
+FROM pandatix/mulval:v0.1.2@sha256:50fd334857b73c73470109f78c0fa57379bd95959534a2bbf397fd37d10e3f41
 COPY --from=builder /go/bin/mulval /mulval
 COPY ./gen ./gen
 ENTRYPOINT [ "/mulval" ]
